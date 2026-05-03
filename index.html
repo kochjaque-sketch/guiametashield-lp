@@ -13,7 +13,10 @@
     n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
     t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
     document,'script','https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init','1458656512592247');
+    var _fbclid = new URLSearchParams(window.location.search).get('fbclid');
+    var _fbAM = {};
+    if (_fbclid) { _fbAM.fbc = 'fb.1.' + Date.now() + '.' + _fbclid; }
+    fbq('init','1458656512592247', _fbAM);
     fbq('track','PageView');
     fbq('trackCustom','LandingPageView');
   </script>
@@ -106,7 +109,8 @@
     .hero { padding: 48px 0 56px; text-align: center; }
     .hero-video { width: 100%; max-width: 500px; aspect-ratio: 16/9; margin: 0 auto; border-radius: var(--radius); overflow: hidden; background: var(--muted-bg); position: relative; box-shadow: var(--shadow-card); }
     .hero-video iframe { width: 100%; height: 100%; border: none; display: block; }
-    .video-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; cursor: pointer; background: url('thumbnail.jpg') center top / cover no-repeat; position: relative; }
+    .video-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; cursor: pointer; background: var(--bg); position: relative; }
+    .video-thumb { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
     .play-btn { width: 68px; height: 68px; border-radius: 50%; background: rgba(255,255,255,0.15); border: 3px solid rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; transition: transform 0.2s, background 0.2s; flex-shrink: 0; }
     .video-placeholder:hover .play-btn { transform: scale(1.1); background: rgba(255,255,255,0.25); }
     .play-icon { width: 0; height: 0; border-top: 13px solid transparent; border-bottom: 13px solid transparent; border-left: 22px solid #fff; margin-left: 5px; }
@@ -255,10 +259,10 @@
     <p class="video-section-label">▾ Veja como funciona em 2 minutos</p>
 
     <div class="hero-video" id="hero-video">
-      <iframe src="https://player-vz-6d6337de-4b3.tv.pandavideo.com.br/embed/?v=338a7a4f-da38-4817-8575-319b1c0bf74f"
-        title="Vídeo de apresentação — Metabolic Safety System"
-        allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture"
-        allowfullscreen></iframe>
+      <div class="video-placeholder" onclick="loadVideo(this)">
+        <img src="thumbnail.jpg" alt="Assista — Metabolic Safety System" width="500" height="281" fetchpriority="high" class="video-thumb">
+        <div class="play-btn"><div class="play-icon"></div></div>
+      </div>
     </div>
   </div>
 </section>
@@ -396,7 +400,7 @@
       </div>
       <div>
         <div class="ebook-visual">
-          <img src="capa-ebook.png" alt="Capa do Ebook Metabolic Safety System" style="width:100%;border-radius:8px;display:block;">
+          <img src="capa-ebook.png" alt="Capa do Ebook Metabolic Safety System" width="512" height="768" loading="lazy" style="width:100%;border-radius:8px;display:block;">
         </div>
       </div>
     </div>
@@ -506,6 +510,11 @@
 </footer>
 
 <script>
+  // Video facade — carrega iframe só ao clicar (LCP fix)
+  function loadVideo(el) {
+    el.closest('.hero-video').innerHTML = '<iframe src="https://player-vz-6d6337de-4b3.tv.pandavideo.com.br/embed/?v=338a7a4f-da38-4817-8575-319b1c0bf74f&autoplay=1" title="Vídeo de apresentação — Metabolic Safety System" allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture" allowfullscreen style="width:100%;height:100%;border:none;display:block"></iframe>';
+  }
+
   // FAQ toggle
   function toggleFaq(btn) {
     var item = btn.closest('.faq-item');
@@ -514,16 +523,11 @@
     if (!isOpen) item.classList.add('open');
   }
 
-  // Sticky bar
-  var heroSection = document.querySelector('.hero');
+  // Sticky bar — IntersectionObserver (sem forced reflow)
   var stickyBar = document.getElementById('sticky-bar');
-  window.addEventListener('scroll', function() {
-    if (heroSection.getBoundingClientRect().bottom < 0) {
-      stickyBar.classList.add('visible');
-    } else {
-      stickyBar.classList.remove('visible');
-    }
-  }, { passive: true });
+  new IntersectionObserver(function(entries) {
+    stickyBar.classList.toggle('visible', !entries[0].isIntersecting);
+  }, { threshold: 0 }).observe(document.querySelector('.hero'));
 
   // Fade in on scroll
   var io = new IntersectionObserver(function(entries) {
