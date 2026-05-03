@@ -236,9 +236,10 @@
     <p class="video-section-label">▾ Veja como funciona em 2 minutos</p>
 
     <div class="hero-video" id="hero-video">
-      <div class="video-placeholder" id="video-placeholder" onclick="loadVideo()" role="button" aria-label="Assistir ao vídeo de apresentação">
-        <div class="play-btn"><div class="play-icon"></div></div>
-      </div>
+      <iframe src="https://player-vz-6d6337de-4b3.tv.pandavideo.com.br/embed/?v=338a7a4f-da38-4817-8575-319b1c0bf74f"
+        title="Vídeo de apresentação — Metabolic Safety System"
+        allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture"
+        allowfullscreen></iframe>
     </div>
   </div>
 </section>
@@ -486,20 +487,6 @@
 </footer>
 
 <script>
-  // Lazy load video on click
-  function loadVideo() {
-    var container = document.getElementById('hero-video');
-    var placeholder = document.getElementById('video-placeholder');
-    var iframe = document.createElement('iframe');
-    iframe.src = 'https://player-vz-6d6337de-4b3.tv.pandavideo.com.br/embed/?v=338a7a4f-da38-4817-8575-319b1c0bf74f&autoplay=1';
-    iframe.title = 'Vídeo de apresentação — Metabolic Safety System';
-    iframe.allow = 'accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture';
-    iframe.allowFullscreen = true;
-    placeholder.style.display = 'none';
-    container.appendChild(iframe);
-    fbq('track', 'ViewContent');
-  }
-
   // FAQ toggle
   function toggleFaq(btn) {
     var item = btn.closest('.faq-item');
