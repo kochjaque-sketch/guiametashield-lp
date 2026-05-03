@@ -205,6 +205,9 @@
     /* Footer */
     footer { background: #080F1E; color: rgba(238,242,247,0.4); text-align: center; padding: 36px 20px; font-size: 12px; line-height: 1.9; }
 
+    /* Brand shield SVG */
+    .shield-svg { display: inline-block; vertical-align: middle; flex-shrink: 0; filter: drop-shadow(0 0 4px rgba(45,212,191,0.9)) drop-shadow(0 0 10px rgba(45,212,191,0.5)); }
+
     /* Spacing helpers */
     .mt-4 { margin-top: 4px; }
     .mt-8 { margin-top: 8px; }
@@ -217,8 +220,23 @@
 </head>
 <body>
 
+<!-- Brand Shield SVG Sprite -->
+<svg style="display:none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sf" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D9C5"/>
+      <stop offset="100%" stop-color="#0DA898"/>
+    </linearGradient>
+    <symbol id="shield-brand" viewBox="0 0 100 114">
+      <path d="M50 4 L88 16 C91 16 93 42 91 60 C87 86 70 100 50 110 C30 100 13 86 9 60 C7 42 9 16 12 16 Z" fill="url(#sf)"/>
+      <path d="M50 4 L88 16 C91 16 93 42 91 60 C87 86 70 100 50 110 C30 100 13 86 9 60 C7 42 9 16 12 16 Z" fill="none" stroke="#2DD4BF" stroke-width="3" stroke-linejoin="round"/>
+      <line x1="50" y1="4" x2="50" y2="110" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
+    </symbol>
+  </defs>
+</svg>
+
 <!-- TOP BAR -->
-<div class="top-bar">🛡️ Acesso imediato após o pagamento &nbsp;·&nbsp; Garantia incondicional de 7 dias</div>
+<div class="top-bar"><svg class="shield-svg" width="14" height="16" aria-hidden="true"><use href="#shield-brand"/></svg> Acesso imediato após o pagamento &nbsp;·&nbsp; Garantia incondicional de 7 dias</div>
 
 <!-- ═══ HERO ═══ -->
 <section class="hero">
@@ -317,7 +335,7 @@
     </ul>
     <div class="pillars-grid">
       <div class="pillar-card">
-        <div class="pillar-icon">🛡️</div>
+        <div class="pillar-icon"><svg class="shield-svg" width="36" height="41" aria-hidden="true"><use href="#shield-brand"/></svg></div>
         <h3>Segurança Corporal</h3>
         <p>Prepare seu corpo para emagrecer sem perder firmeza ou energia.</p>
       </div>
@@ -389,7 +407,7 @@
         Sim, quero proteger meu corpo agora
       </a>
       <div class="guarantee-row mt-24">
-        <span class="g-icon">🛡️</span>
+        <span class="g-icon"><svg class="shield-svg" width="36" height="41" aria-hidden="true"><use href="#shield-brand"/></svg></span>
         <div>
           <strong>Garantia de 7 dias — 100% do dinheiro de volta</strong>
           <span>Se em 7 dias você não se sentir mais segura e informada, devolvemos 100%. Sem perguntas.</span>
