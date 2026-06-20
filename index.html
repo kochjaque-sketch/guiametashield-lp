@@ -6,19 +6,27 @@
   <title>Metabolic Safety System™ — Proteja Seu Corpo Enquanto Emagrece</title>
   <meta name="description" content="O protocolo de alimentação para quem usa GLP-1 e quer terminar o tratamento com firmeza, energia e sem efeito rebote.">
 
-  <!-- Meta Pixel -->
+  <!-- Meta Pixel — carregamento diferido para não bloquear LCP -->
   <script>
-    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
-    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    // Stub fbq: cria fila de eventos sem carregar fbevents.js agora
+    !function(f){if(f.fbq)return;var n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[]}(window);
+    // Captura fbclid para rastreamento FBC (antes do pageview)
     var _fbclid = new URLSearchParams(window.location.search).get('fbclid');
     var _fbAM = {};
     if (_fbclid) { _fbAM.fbc = 'fb.1.' + Date.now() + '.' + _fbclid; }
+    // Enfileira eventos — processados quando fbevents.js carregar
     fbq('init','1458656512592247', _fbAM);
     fbq('track','PageView');
     fbq('trackCustom','LandingPageView');
+    // Carrega fbevents.js após window.load: não bloqueia LCP nem FCP
+    window.addEventListener('load', function() {
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://connect.facebook.net/en_US/fbevents.js';
+      document.head.appendChild(s);
+    });
   </script>
   <noscript><img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=1458656512592247&ev=PageView&noscript=1"/></noscript>
