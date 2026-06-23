@@ -12,21 +12,47 @@
     !function(f){if(f.fbq)return;var n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};
     f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[]}(window);
-    // Captura fbclid para rastreamento FBC (antes do pageview)
-    var _fbclid = new URLSearchParams(window.location.search).get('fbclid');
-    var _fbAM = {};
-    if (_fbclid) { _fbAM.fbc = 'fb.1.' + Date.now() + '.' + _fbclid; }
-    // Enfileira eventos — processados quando fbevents.js carregar
-    fbq('init','1458656512592247', _fbAM);
-    fbq('track','PageView');
-    fbq('trackCustom','LandingPageView');
-    // Carrega fbevents.js após window.load: não bloqueia LCP nem FCP
-    window.addEventListener('load', function() {
-      var s = document.createElement('script');
-      s.async = true;
-      s.src = 'https://connect.facebook.net/en_US/fbevents.js';
-      document.head.appendChild(s);
-    });
+
+    // Init assíncrono: external_id persistente + SHA-256 de em/ph (melhora EMQ)
+    (async function() {
+      // SHA-256 helper via Web Crypto API
+      async function _sha256(str) {
+        var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+        return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+      }
+
+      // external_id: UUID v4 persistente no localStorage (rastreamento por dispositivo)
+      var _eidKey = 'mss_eid';
+      var _eid = localStorage.getItem(_eidKey);
+      if (!_eid) {
+        var _r = crypto.getRandomValues(new Uint8Array(16));
+        _r[6] = _r[6] & 0x0f | 0x40;
+        _r[8] = _r[8] & 0x3f | 0x80;
+        _eid = Array.from(_r).map(function(b,i){
+          return ([4,6,8,10].indexOf(i) >= 0 ? '-' : '') + b.toString(16).padStart(2,'0');
+        }).join('');
+        localStorage.setItem(_eidKey, _eid);
+      }
+
+      // Parâmetros de URL: fbclid, em (email), ph (telefone)
+      var _p = new URLSearchParams(window.location.search);
+      var _ud = { external_id: _eid };
+      if (_p.get('fbclid')) _ud.fbc = 'fb.1.' + Date.now() + '.' + _p.get('fbclid');
+      if (_p.get('em'))     _ud.em = await _sha256(_p.get('em').trim().toLowerCase());
+      if (_p.get('ph'))     _ud.ph = await _sha256(_p.get('ph').replace(/\D/g,''));
+
+      fbq('init', '1458656512592247', _ud);
+      fbq('track', 'PageView');
+      fbq('trackCustom', 'LandingPageView');
+
+      // Carrega fbevents.js após window.load: não bloqueia LCP nem FCP
+      window.addEventListener('load', function() {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://connect.facebook.net/en_US/fbevents.js';
+        document.head.appendChild(s);
+      });
+    })();
   </script>
   <noscript><img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=1458656512592247&ev=PageView&noscript=1"/></noscript>
